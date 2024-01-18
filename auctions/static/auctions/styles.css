@@ -1,0 +1,22 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+.heading{
+  font-size: 30px;
+}
+.heading:hover{
+  color: #ce1212!important;
+}
+.navigations{
+  font-size: 20px;
+  color: white!important;
+}
+
+.navigations:hover{
+  color: #ce1212!important;
+}
+
+.navbar{
+background-color: #ff7b54!important;
+}

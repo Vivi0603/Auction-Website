@@ -1,0 +1,22 @@
+{%extends 'auctions/layout.html'%}
+
+{%block body%}
+<div class="container mt-5">
+    <div class="row">
+{% for listing in listings%}
+<div class="col-lg-4">
+<div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="{{listing.image.url}}" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">{{listing.title}}</h5>
+      <p class="card-text">{{listing.description}}</p>
+      <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View</a>
+    </div>
+  </div>
+</div>
+  {%empty%}
+  <h2>You have no listings.</h2>
+{%endfor%}
+</div>
+</div>
+{%endblock%}

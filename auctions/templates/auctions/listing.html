@@ -1,0 +1,108 @@
+{% extends 'auctions/layout.html'%}
+
+{% block body%}
+
+<div class="container">
+    <div style="display: flex;">
+        <img style="width: 30vw; padding: 20px;" src="{{listing.image.url}}">
+        <div class="mt-5 col-lg-6">
+            <a style="float: right;" href="{% url 'index' %}">Go back</a>
+            <h2>{{listing.title}}</h2>
+            <p>{{listing.description}}</p>
+            <small>Bidder: {{listing.bidder}}</small>
+            {% if listing.status == False%}
+            <h4 style="color: red;">Item Sold.</h4>
+            {%else%}
+            <h4>Current Bid : {{listing.bid}}$</h4>
+            {%endif%}
+            {%if user.is_authenticated%}
+
+                {% if listing.owner == request.user%}
+                {%else%}
+
+                    {% if listing.status == False and listing.bidder == request.user %}
+
+                    <div class="alert alert-success" role="alert">
+                        Congrats you've won the bid. contact <a href="mailto:{{listing.ownerEmail}}">owner</a>
+                    </div>
+
+                    {%else%}
+
+                    {%if listing.status == False%}
+
+
+                    {%else%}
+                    <form action="{% url 'listing' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <div style="display: flex ;">
+                            <input class="form-control mt-3" style="width: 15vw!important;" type="number" name="bid" step="0.1">
+                            <button type="submit" class="btn btn-primary mt-3 ml-3">Bid</button>
+                        </div>
+                    </form>
+                    {%endif%}
+                    {%endif%}
+                {%endif%}
+
+                <small>Listed by {{listing.owner}}</small>
+
+                {% if message%}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        {{message}}
+                    </div>
+                {%endif%}
+
+                {% if listing.owner == request.user%}
+
+                    {% if listing.status == False %}
+
+                    <div class="mt-3">
+                        <div class="alert alert-success" role="alert">
+                            Bid won by {{listing.bidder}} at {{listing.bid}} <a href="mailto:{{listing.bidderEmail}}">contact</a>
+                        </div>
+                        <form action="{% url 'delete' listing.id %}" method="POST">
+                            {%csrf_token%}
+                            <button type="submit" class="btn btn-danger mt-2">Delete</button>
+                        </form>
+                    </div>
+                    {%else%}
+                    <div style="display: flex;">
+                        <form class="pr-3" action="{%url 'close' listing.id %}" method="POST">
+                            {%csrf_token%}
+                            <button type="submit" class="btn btn-secondary mt-2">Close Bid</button>
+                        </form>
+                        <form action="{% url 'delete' listing.id %}" method="POST">
+                            {%csrf_token%}
+                            <button type="submit" class="btn btn-danger mt-2">Delete</button>
+                        </form>
+                    </div>
+                    {%endif%}
+                {%else %}
+
+                
+                    {% if watchlist.watcher == request.user %}
+                        <form action="{%url 'deleteWatch'%}" method="POST">
+                            {%csrf_token%}
+                        <button type="submit" class="btn btn-danger mt-2">remove from Watchlist</button>
+                        <input type="hidden" name="listing_id" value="{{listing.id}}">
+                        </form>
+                    {%else%}
+
+                        <form action="{% url 'addwatchlist' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{listing.id}}" name="list_id" >
+                            <button type="submit" class="btn btn-danger mt-2">Add to Watchlist</button>
+                        </form>
+                        {%endif%}
+                {%endif%}
+
+                {%else%}
+                    <small>Listed by {{listing.owner}}</small>
+                    <div class="alert alert-danger mt-3" role="alert">
+                        Log in to bid/add to Watchlist. <a href="{% url 'login'%}">Log in</a>
+                    </div>
+                {%endif%}
+        </div>
+    </div>
+</div>
+
+{%endblock%}
